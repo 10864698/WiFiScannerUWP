@@ -1,19 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Windows.Devices.WiFi;
-using System.Collections.ObjectModel;
 using Windows.UI.Popups;
 using System.Threading.Tasks;
 using System.Text;
@@ -74,31 +63,6 @@ namespace WiFiScannerUWP
             btnScan.IsEnabled = true;
         }
 
-        //private void btnScanRepeatedly_Click(object sender, RoutedEventArgs e)
-        //{
-        //    DispatcherTimer timer = new DispatcherTimer();
-
-        //    timer.Interval = new TimeSpan(0, 0, 10);
-        //    timer.Tick += Timer_Tick;
-        //    timer.Start();
-        //}
-
-        //private async void Timer_Tick(object sender, object e)
-        //{
-        //    try
-        //    {
-        //        StringBuilder networkInfo = await RunWifiScan();
-
-        //        txbReport.Text = txbReport.Text + networkInfo.ToString();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageDialog md = new MessageDialog(ex.Message);
-
-        //        await md.ShowAsync();
-        //    }
-        //}
-
         private async Task<StringBuilder> RunWifiScan()
         {
             await _wifiScanner.ScanForNetworks();
@@ -128,7 +92,8 @@ namespace WiFiScannerUWP
                     NetworkKind = availableNetwork.NetworkKind.ToString(),
                     PhysicalKind = availableNetwork.PhyKind.ToString(),
                     Encryption = availableNetwork.SecuritySettings.NetworkEncryptionType.ToString(),
-                    VenueName = _wifiScanner.venueName
+                    VenueName = _wifiScanner.venueName,
+                    StartTime = _wifiScanner.startTime
             };
 
                 wifiPoint.WiFiSignals.Add(wifiSignal);
@@ -144,7 +109,7 @@ namespace WiFiScannerUWP
 
             StringBuilder networkInfo = new StringBuilder();
 
-            networkInfo.AppendLine("MAC,SSID,SignalBars,Type,Lat,Long,Accuracy,Encryption,Venue");
+            networkInfo.AppendLine("MAC,SSID,SignalBars,Type,Lat,Long,Accuracy,Encryption,Venue,Time");
             
             foreach (var wifiSignal in wifiPoint.WiFiSignals)
             {
@@ -156,7 +121,8 @@ namespace WiFiScannerUWP
                 networkInfo.Append($"{wifiPoint.Longitude},");
                 networkInfo.Append($"{wifiPoint.Accuracy},");
                 networkInfo.Append($"{wifiSignal.Encryption},");
-                networkInfo.Append($"{wifiSignal.VenueName}");
+                networkInfo.Append($"{_wifiScanner.venueName},");
+                networkInfo.Append($"{_wifiScanner.startTime.ToString("G")}");
                 networkInfo.AppendLine();
             }
 

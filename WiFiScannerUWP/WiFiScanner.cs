@@ -12,6 +12,7 @@ namespace WiFiScannerUWP
 
     {
         private string venue_name;
+        public DateTime startTime;
 
         public WiFiAdapter WiFiAdapter { get; private set; }
 
@@ -44,15 +45,9 @@ namespace WiFiScannerUWP
         {
             if (WiFiAdapter != null)
             {
-                var startTime = DateTime.Now;
+                startTime = DateTime.Now;
 
                 await WiFiAdapter.ScanAsync();
-
-                var endTime = DateTime.Now;
-
-                var duration = endTime - startTime;
-
-                var time = duration.ToString();
             }
         }
 

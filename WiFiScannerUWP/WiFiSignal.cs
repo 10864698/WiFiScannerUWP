@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WiFiScannerUWP
 
@@ -18,9 +13,6 @@ namespace WiFiScannerUWP
         public double ChannelCenterFrequencyInKilohertz { get; set; }
         public string Encryption { get; set; }
         public string VenueName { get; internal set; }
-
-
-
-        //TODO: add security details
+        public DateTime StartTime { get; internal set; }
     }
 }
