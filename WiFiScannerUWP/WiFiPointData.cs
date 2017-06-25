@@ -17,7 +17,7 @@ namespace WiFiScannerUWP
 
         public WiFiPointData()
         {
-            this.WiFiSignals = new List<WiFiSignal>();
+            WiFiSignals = new List<WiFiSignal>();
         }
     }
 }

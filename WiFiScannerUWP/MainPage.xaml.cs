@@ -18,6 +18,7 @@ using Windows.UI.Popups;
 using System.Threading.Tasks;
 using System.Text;
 using Windows.Devices.Geolocation;
+using Windows.Storage;
 
 namespace WiFiScannerUWP
 {
@@ -30,6 +31,8 @@ namespace WiFiScannerUWP
             InitializeComponent();
 
             _wifiScanner = new WiFiScanner();
+
+            DataContext = _wifiScanner;
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -51,6 +54,15 @@ namespace WiFiScannerUWP
                 StringBuilder networkInfo = await RunWifiScan();
 
                 txbReport.Text = networkInfo.ToString();
+
+                StorageFolder storageFolder = KnownFolders.DocumentsLibrary;
+                StorageFile sampleFile = await storageFolder.CreateFileAsync("wifidata.csv", CreationCollisionOption.OpenIfExists);
+                sampleFile = await storageFolder.GetFileAsync("wifidata.csv");
+
+                var datafile = new List<string>() { networkInfo.ToString() };
+                await FileIO.AppendLinesAsync(sampleFile, datafile);
+
+
             }
             catch (Exception ex)
             {
@@ -115,8 +127,9 @@ namespace WiFiScannerUWP
                     ChannelCenterFrequencyInKilohertz = availableNetwork.ChannelCenterFrequencyInKilohertz,
                     NetworkKind = availableNetwork.NetworkKind.ToString(),
                     PhysicalKind = availableNetwork.PhyKind.ToString(),
-                    Encryption = availableNetwork.SecuritySettings.NetworkEncryptionType.ToString()
-                };
+                    Encryption = availableNetwork.SecuritySettings.NetworkEncryptionType.ToString(),
+                    VenueName = _wifiScanner.venueName
+            };
 
                 wifiPoint.WiFiSignals.Add(wifiSignal);
             }
@@ -131,8 +144,8 @@ namespace WiFiScannerUWP
 
             StringBuilder networkInfo = new StringBuilder();
 
-            networkInfo.AppendLine("MAC,SSID,SignalBars,Type,Lat,Long,Accuracy,Encryption");
-
+            networkInfo.AppendLine("MAC,SSID,SignalBars,Type,Lat,Long,Accuracy,Encryption,Venue");
+            
             foreach (var wifiSignal in wifiPoint.WiFiSignals)
             {
                 networkInfo.Append($"{wifiSignal.MacAddress},");
@@ -142,7 +155,8 @@ namespace WiFiScannerUWP
                 networkInfo.Append($"{wifiPoint.Latitude},");
                 networkInfo.Append($"{wifiPoint.Longitude},");
                 networkInfo.Append($"{wifiPoint.Accuracy},");
-                networkInfo.Append($"{wifiSignal.Encryption}");
+                networkInfo.Append($"{wifiSignal.Encryption},");
+                networkInfo.Append($"{wifiSignal.VenueName}");
                 networkInfo.AppendLine();
             }
 
@@ -155,5 +169,8 @@ namespace WiFiScannerUWP
 
             await dialog.ShowAsync();
         }
+
+        private void venueName_TextChanged(object sender, TextChangedEventArgs e)
+        { }
     }
 }

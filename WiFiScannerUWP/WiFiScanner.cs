@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.WiFi;
@@ -7,10 +8,32 @@ using Windows.Devices.WiFi;
 
 namespace WiFiScannerUWP
 {
-    public class WiFiScanner
+    public class WiFiScanner : INotifyPropertyChanged
 
     {
+        private string venue_name;
+
         public WiFiAdapter WiFiAdapter { get; private set; }
+
+        public string venueName
+
+        {
+            get { return venue_name; }
+
+            set
+            {
+                venue_name = value;
+                OnPropertyChanged("venueName");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string name)
+
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
 
         public async Task InitializeScanner()
         {
