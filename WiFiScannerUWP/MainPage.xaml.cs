@@ -41,17 +41,26 @@ namespace WiFiScannerUWP
             try
             {
                 StringBuilder networkInfo = await RunWifiScan();
+                List<string> wifidata = new List<string>() { networkInfo.ToString() };
 
-                txbReport.Text = networkInfo.ToString();
+                //Roaming copy
+                ApplicationDataContainer roamingSettings = ApplicationData.Current.RoamingSettings;
+                StorageFolder roamingFolder = ApplicationData.Current.RoamingFolder;
 
+                StorageFile roamingFile = await roamingFolder.CreateFileAsync("wifidata.csv", CreationCollisionOption.OpenIfExists);
+                roamingFile = await roamingFolder.GetFileAsync("wifidata.csv");
+                await FileIO.AppendLinesAsync(roamingFile, wifidata);
+
+                //GUI Output
+                txbReport.Text = await FileIO.ReadTextAsync(roamingFile);
+
+                //Local copy in Documents folder
                 StorageFolder storageFolder = KnownFolders.DocumentsLibrary;
-                StorageFile sampleFile = await storageFolder.CreateFileAsync("wifidata.csv", CreationCollisionOption.OpenIfExists);
-                sampleFile = await storageFolder.GetFileAsync("wifidata.csv");
 
-                var datafile = new List<string>() { networkInfo.ToString() };
-                await FileIO.AppendLinesAsync(sampleFile, datafile);
+                StorageFile storageFile = await storageFolder.CreateFileAsync("wifidata.csv", CreationCollisionOption.ReplaceExisting);
+                storageFile = await storageFolder.GetFileAsync("wifidata.csv");
 
-
+                await FileIO.WriteTextAsync(storageFile, await FileIO.ReadTextAsync(roamingFile));
             }
             catch (Exception ex)
             {
