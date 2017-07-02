@@ -8,11 +8,11 @@ using Windows.Devices.WiFi;
 
 namespace WiFiScannerUWP
 {
-    public class WiFiScanner : INotifyPropertyChanged
+    public class WiFiAdapterScanner : INotifyPropertyChanged
 
     {
         private string venue_name;
-        public DateTime startTime;
+        internal DateTime scanTime;
 
         public WiFiAdapter WiFiAdapter { get; private set; }
 
@@ -45,7 +45,7 @@ namespace WiFiScannerUWP
         {
             if (WiFiAdapter != null)
             {
-                startTime = DateTime.Now;
+                scanTime = DateTime.Now;
 
                 await WiFiAdapter.ScanAsync();
             }

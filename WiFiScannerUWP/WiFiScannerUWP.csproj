@@ -99,8 +99,8 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WiFiPointData.cs" />
-    <Compile Include="WiFiScanner.cs" />
+    <Compile Include="WiFiAdapterScanner.cs" />
+    <Compile Include="LocationWiFiGPSDetail.cs" />
     <Compile Include="WiFiSignal.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -129,8 +129,11 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SQLite">
+      <Version>1.1.1</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>5.2.3</Version>
+      <Version>5.3.3</Version>
     </PackageReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

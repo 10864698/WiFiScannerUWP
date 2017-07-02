@@ -1,0 +1,35 @@
+SQL QUeries
+
+CREATE TABLE IF NOT EXISTS WiFiSignals (
+
+Primary_Key INTEGER PRIMARY KEY AUTOINCREMENT, 
+BeaconInterval TIME NULL, 
+Bssid VARCHAR(255) NULL, 
+ChannelCenterFrequencyInKilohertz INT NULL, 
+IsWiFiDirect BIT NULL, 
+NetworkKind VARCHAR(255) NULL, 
+NetworkRssiInDecibelMilliwatts DOUBLE NULL, 
+PhyKind VARCHAR(255) NULL, 
+SecuritySettings VARCHAR(255) NULL, 
+SignalBars INT NULL, 
+Ssid VARCHAR(255) NULL, 
+Uptime DATETIME NULL,
+VenueName VARCHAR(255) NULL,
+ScanTime VARCHAR(255) NULL
+)
+
+"INSERT INTO WiFiSignals VALUES (" +
+                    "NULL," +
+                    "@BeaconInterval," +
+                    "@Bssid," +
+                    "@ChannelCenterFrequencyInKilohertz," +
+                    "@IsWiFiDirect," +
+                    "@NetworkKind," +
+                    "@NetworkRssiInDecibelMilliwatts," +
+                    "@PhyKind," +
+                    "@SecuritySettings," +
+                    "@SignalBars," +
+                    "@Ssid," +
+                    "@Uptime," +
+                    "@VenueName" +
+                    "@ScanTime;)"

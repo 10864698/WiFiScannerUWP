@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace WiFiScannerUWP
 
 {
-    public class WiFiPointData
+    public class LocationWiFiGPSDetail
     {
         public DateTimeOffset TimeStamp { get; set; }
         public double? Latitude { get; set; }
@@ -13,7 +13,7 @@ namespace WiFiScannerUWP
 
         public List<WiFiSignal> WiFiSignals { get; private set; }
 
-        public WiFiPointData()
+        public LocationWiFiGPSDetail()
         {
             WiFiSignals = new List<WiFiSignal>();
         }

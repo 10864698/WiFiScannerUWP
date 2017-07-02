@@ -1,0 +1,15 @@
+Severity	Code	Description	Project	File	Line	Suppression State
+Error		Payload contains two or more files with the same destination path 'sqlite3.dll'. Source files: 
+C:\Users\georg\.nuget\packages\SQLite\3.13.0\runtimes\win10-x64\nativeassets\uap10.0\sqlite3.dll
+C:\Program Files (x86)\Microsoft SDKs\UAP\v0.8.0.0\ExtensionSDKs\SQLite.UWP.2015\3.19.3\Redist\Retail\x64\sqlite3.dll	WiFiScannerUWP	
+
+System.Exception occurred
+  HResult=0x80131500
+  Message=SQL table not created.
+  Source=<unknown>
+  StackTrace:
+   at WiFiScannerUWP.MainPage..ctor() in C:\Users\georg\Source\Repos\WiFIScannerUWP\WiFiScannerUWP\MainPage.xaml.cs:line 54
+   at WiFiScannerUWP.WiFiScannerUWP_XamlTypeInfo.XamlTypeInfoProvider.Activate_0_MainPage() in C:\Users\georg\Source\Repos\WiFIScannerUWP\WiFiScannerUWP\obj\x64\Release\XamlTypeInfo.g.cs:line 178
+   at WiFiScannerUWP.WiFiScannerUWP_XamlTypeInfo.XamlUserType.ActivateInstance() in C:\Users\georg\Source\Repos\WiFIScannerUWP\WiFiScannerUWP\obj\x64\Release\XamlTypeInfo.g.cs:line 333
+   at Windows.UI.Xaml.Markup.IXamlType__Impl.Vtbl.ActivateInstance__n(IntPtr pComThis, Void** unsafe_instance__retval) in C:\Users\georg\Source\Repos\WiFIScannerUWP\WiFiScannerUWP\obj\x64\Release\ilc\intermediate\WiFiScannerUWP.McgInterop\ImplTypes.g.cs:line 34853
+
