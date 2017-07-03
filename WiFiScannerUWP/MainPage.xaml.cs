@@ -28,30 +28,48 @@ namespace WiFiScannerUWP
             SqliteEngine.UseWinSqlite3(); //Configuring library to use SDK version of SQLite
             using (SqliteConnection db = new SqliteConnection("Filename = WiFiScanner.db"))
             {
-                db.Open();
-                String tableCommand = "CREATE TABLE IF NOT EXISTS WiFiSignals (" +
-                    "Primary_Key INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "BeaconInterval TIME NULL," +
-                    "Bssid VARCHAR(255) NULL," +
-                    "ChannelCenterFrequencyInKilohertz INT NULL," +
-                    "IsWiFiDirect BIT NULL,NetworkKind VARCHAR(255) NULL," +
-                    "NetworkKind VARCHAR(255) NUL," +
-                    "NetworkRssiInDecibelMilliwatts DOUBLE NULL," +
-                    "PhyKind VARCHAR(255) NULL," +
-                    "SecuritySettings VARCHAR(255) NULL," +
-                    "SignalBars INT NULL," +
-                    "Ssid VARCHAR(255) NULL," +
-                    "Uptime DATETIME NULL," +
-                    "VenueName VARCHAR(255) NULL," +
-                    "ScanTime VARCHAR(255) NULL)";
-                SqliteCommand createTable = new SqliteCommand(tableCommand, db);
+                try
+                {
+                    db.Open();
+                }
+                catch(SqliteException e)
+                {
+                    throw new Exception("SQL database not opened.");
+                }
+
+                String drop_table_command = "DROP TABLE IF EXISTS WiFiSignals;";
+                SqliteCommand dropTable = new SqliteCommand(drop_table_command, db);
+                try
+                {
+                    dropTable.ExecuteReader();
+                }
+                catch (SqliteException e)
+                {
+                    throw new Exception("SQL table not droped.");
+                }
+
+                String create_table_command = "CREATE TABLE IF NOT EXISTS WiFiSignals (" +
+                    "BeaconInterval TEXT NULL," +
+                    "Bssid TEXT NULL," +
+                    "ChannelCenterFrequencyInKilohertz REAL NULL," +
+                    "IsWiFiDirect BLOB NULL," +
+                    "NetworkKind TEXT NUL," +
+                    "NetworkRssiInDecibelMilliwatts REAL NULL," +
+                    "PhyKind TEXT NULL," +
+                    "SecuritySettings TEXT NULL," +
+                    "SignalBars INTEGER NULL," +
+                    "Ssid TEXT NULL," +
+                    "Uptime TEXT NULL," +
+                    "VenueName TEXT NULL," +
+                    "ScanTime TEXT NULL)";
+                SqliteCommand createTable = new SqliteCommand(create_table_command, db);
                 try
                 {
                     createTable.ExecuteReader();
                 }
                 catch (SqliteException e)
                 {
-                    //throw new Exception("SQL table not created.");
+                    throw new Exception("SQL table not created.");
                 }
                 db.Close();
             }
@@ -167,46 +185,45 @@ namespace WiFiScannerUWP
             {
                 db.Open();
 
-                SqliteCommand insertCommand = new SqliteCommand();
-                insertCommand.Connection = db;
-
-                //Use parameterized query to prevent SQL injection attacks
-                insertCommand.CommandText = "INSERT INTO MyTable VALUES (" +
-                    "NULL," +
-                    "@BeaconInterval," +
-                    "@Bssid," +
-                    "@ChannelCenterFrequencyInKilohertz," +
-                    "@IsWiFiDirect," +
-                    "@NetworkKind," +
-                    "@NetworkRssiInDecibelMilliwatts," +
-                    "@PhyKind," +
-                    "@SecuritySettings," +
-                    "@SignalBars," +
-                    "@Ssid," +
-                    "@Uptime," +
-                    "@VenueName" +
-                    "@ScanTime;)";
-                insertCommand.Parameters.AddWithValue("@BeaconInterval", wifiSignal.BeaconInterval);
-                insertCommand.Parameters.AddWithValue("@Bssid", wifiSignal.Bssid);
-                insertCommand.Parameters.AddWithValue("@ChannelCenterFrequencyInKilohertz", wifiSignal.ChannelCenterFrequencyInKilohertz);
-                insertCommand.Parameters.AddWithValue("@IsWiFiDirect", wifiSignal.IsWiFiDirect);
-                insertCommand.Parameters.AddWithValue("@NetworkKind", wifiSignal.NetworkKind);
-                insertCommand.Parameters.AddWithValue("@NetworkRssiInDecibelMilliwatts", wifiSignal.NetworkRssiInDecibelMilliwatts);
-                insertCommand.Parameters.AddWithValue("@PhyKind", wifiSignal.PhyKind);
-                insertCommand.Parameters.AddWithValue("@SecuritySettings", wifiSignal.SecuritySettings);
-                insertCommand.Parameters.AddWithValue("@SignalBars", wifiSignal.SignalBars);
-                insertCommand.Parameters.AddWithValue("@Ssid", wifiSignal.Ssid);
-                insertCommand.Parameters.AddWithValue("@Uptime", wifiSignal.Uptime);
-                insertCommand.Parameters.AddWithValue("@VenueName", wifiSignal.VenueName);
-                insertCommand.Parameters.AddWithValue("@ScanTime", wifiSignal.ScanTime);
-
-                try
+                using (SqliteCommand insertCommand = new SqliteCommand())
                 {
-                    insertCommand.ExecuteReader();
-                }
-                catch (SqliteException e)
-                {
-                    //throw new Exception("SQL table INSERT not performed");
+                    insertCommand.Connection = db;
+                    insertCommand.CommandText = "INSERT INTO WiFiSignals VALUES (" +
+                        "@BeaconInterval," +
+                        "@Bssid," +
+                        "@ChannelCenterFrequencyInKilohertz," +
+                        "@IsWiFiDirect," +
+                        "@NetworkKind," +
+                        "@NetworkRssiInDecibelMilliwatts," +
+                        "@PhyKind," +
+                        "@SecuritySettings," +
+                        "@SignalBars," +
+                        "@Ssid," +
+                        "@Uptime," +
+                        "@VenueName," +
+                        "@ScanTime)";
+                    insertCommand.Parameters.AddWithValue("@BeaconInterval", wifiSignal.BeaconInterval);
+                    insertCommand.Parameters.AddWithValue("@Bssid", wifiSignal.Bssid);
+                    insertCommand.Parameters.AddWithValue("@ChannelCenterFrequencyInKilohertz", wifiSignal.ChannelCenterFrequencyInKilohertz);
+                    insertCommand.Parameters.AddWithValue("@IsWiFiDirect", wifiSignal.IsWiFiDirect);
+                    insertCommand.Parameters.AddWithValue("@NetworkKind", wifiSignal.NetworkKind);
+                    insertCommand.Parameters.AddWithValue("@NetworkRssiInDecibelMilliwatts", wifiSignal.NetworkRssiInDecibelMilliwatts);
+                    insertCommand.Parameters.AddWithValue("@PhyKind", wifiSignal.PhyKind);
+                    insertCommand.Parameters.AddWithValue("@SecuritySettings", wifiSignal.SecuritySettings);
+                    insertCommand.Parameters.AddWithValue("@SignalBars", wifiSignal.SignalBars);
+                    insertCommand.Parameters.AddWithValue("@Ssid", wifiSignal.Ssid);
+                    insertCommand.Parameters.AddWithValue("@Uptime", wifiSignal.Uptime);
+                    insertCommand.Parameters.AddWithValue("@VenueName", wifiSignal.VenueName);
+                    insertCommand.Parameters.AddWithValue("@ScanTime", wifiSignal.ScanTime.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+
+                    try
+                    {
+                        insertCommand.ExecuteReader();
+                    }
+                    catch (SqliteException e)
+                    {
+                        throw new Exception("SQL table INSERT not performed");
+                    }
                 }
                 db.Close();
             }

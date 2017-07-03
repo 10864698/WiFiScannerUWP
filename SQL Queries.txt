@@ -1,24 +1,22 @@
 SQL QUeries
 
-CREATE TABLE IF NOT EXISTS WiFiSignals (
+String create_table_command = "CREATE TABLE IF NOT EXISTS WiFiSignals (" +
+                    "Primary_Key INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "BeaconInterval TEXT NULL," +
+                    "Bssid TEXT NULL," +
+                    "ChannelCenterFrequencyInKilohertz REAL NULL," +
+                    "IsWiFiDirect BLOB NULL," +
+                    "NetworkKind TEXT NUL," +
+                    "NetworkRssiInDecibelMilliwatts REAL NULL," +
+                    "PhyKind TEXT NULL," +
+                    "SecuritySettings TEXT NULL," +
+                    "SignalBars INTEGER NULL," +
+                    "Ssid TEXT NULL," +
+                    "Uptime TEXT NULL," +
+                    "VenueName TEXT NULL," +
+                    "ScanTime TEXT NULL)";
 
-Primary_Key INTEGER PRIMARY KEY AUTOINCREMENT, 
-BeaconInterval TIME NULL, 
-Bssid VARCHAR(255) NULL, 
-ChannelCenterFrequencyInKilohertz INT NULL, 
-IsWiFiDirect BIT NULL, 
-NetworkKind VARCHAR(255) NULL, 
-NetworkRssiInDecibelMilliwatts DOUBLE NULL, 
-PhyKind VARCHAR(255) NULL, 
-SecuritySettings VARCHAR(255) NULL, 
-SignalBars INT NULL, 
-Ssid VARCHAR(255) NULL, 
-Uptime DATETIME NULL,
-VenueName VARCHAR(255) NULL,
-ScanTime VARCHAR(255) NULL
-)
-
-"INSERT INTO WiFiSignals VALUES (" +
+insertCommand.CommandText = "INSERT INTO MyTable VALUES (" +
                     "NULL," +
                     "@BeaconInterval," +
                     "@Bssid," +
@@ -32,4 +30,17 @@ ScanTime VARCHAR(255) NULL
                     "@Ssid," +
                     "@Uptime," +
                     "@VenueName" +
-                    "@ScanTime;)"
+                    "@ScanTime;)";
+                insertCommand.Parameters.AddWithValue("@BeaconInterval", null/*wifiSignal.BeaconInterval*/);
+                insertCommand.Parameters.AddWithValue("@Bssid", wifiSignal.Bssid);
+                insertCommand.Parameters.AddWithValue("@ChannelCenterFrequencyInKilohertz", wifiSignal.ChannelCenterFrequencyInKilohertz);
+                insertCommand.Parameters.AddWithValue("@IsWiFiDirect", wifiSignal.IsWiFiDirect);
+                insertCommand.Parameters.AddWithValue("@NetworkKind", wifiSignal.NetworkKind);
+                insertCommand.Parameters.AddWithValue("@NetworkRssiInDecibelMilliwatts", wifiSignal.NetworkRssiInDecibelMilliwatts);
+                insertCommand.Parameters.AddWithValue("@PhyKind", wifiSignal.PhyKind);
+                insertCommand.Parameters.AddWithValue("@SecuritySettings", wifiSignal.SecuritySettings);
+                insertCommand.Parameters.AddWithValue("@SignalBars", null/*wifiSignal.SignalBars*/);
+                insertCommand.Parameters.AddWithValue("@Ssid", wifiSignal.Ssid);
+                insertCommand.Parameters.AddWithValue("@Uptime", null/*wifiSignal.Uptime*/);
+                insertCommand.Parameters.AddWithValue("@VenueName", wifiSignal.VenueName);
+                insertCommand.Parameters.AddWithValue("@ScanTime", wifiSignal.ScanTime.ToString("yyyy-MM-dd HH:mm:ss.fff"));
