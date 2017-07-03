@@ -12,19 +12,29 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <TextBlock FontSize="36" Grid.RowSpan="2" >WiFi Scanner</TextBlock>
+        <Button Name="btnScan" Click="btnScan_Click" Grid.Row="0"  HorizontalAlignment="Center" >Scan For Networks</Button>
 
-        <StackPanel Name="spButtons" Grid.Row="1" Orientation="Horizontal">
-            <Button Name="btnScan" Click="btnScan_Click" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Center" >Scan For Networks</Button>
-            <TextBox x:Name="venueNameTextBox" Header="Venue" Height="66" Width="352" TextChanged="venueName_TextChanged" IsReadOnly="False" Margin="0" TextWrapping="Wrap" Text="{Binding venueName, Mode=TwoWay}"/>
+        <StackPanel Name="spButtons" Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal">
+            <TextBox x:Name="venueNameTextBox" Header="Venue" Height="66" Width="352" TextChanged="venueName_TextChanged" IsReadOnly="False" Margin="0" TextWrapping="Wrap" Text="{Binding venueName, Mode=TwoWay}" HorizontalAlignment="Center"/>
         </StackPanel>
 
-        <TextBox Name="txbReport" TextWrapping="Wrap" AcceptsReturn="True" Grid.Row="2"></TextBox>
-    
+
+        <StackPanel Grid.Row="2">
+            <ListView Name="Output" ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
+
     </Grid>
 </Page>

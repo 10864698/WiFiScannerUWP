@@ -23,7 +23,7 @@ namespace WiFiScannerUWP
 
             _wifiScanner = new WiFiAdapterScanner();
 
-            DataContext = _wifiScanner;
+            //DataContext = _wifiScanner;
 
             SqliteEngine.UseWinSqlite3(); //Configuring library to use SDK version of SQLite
             using (SqliteConnection db = new SqliteConnection("Filename = WiFiScanner.db"))
@@ -41,7 +41,7 @@ namespace WiFiScannerUWP
                 SqliteCommand dropTable = new SqliteCommand(drop_table_command, db);
                 try
                 {
-                    dropTable.ExecuteReader();
+                    dropTable.ExecuteNonQuery();
                 }
                 catch (SqliteException e)
                 {
@@ -49,23 +49,28 @@ namespace WiFiScannerUWP
                 }
 
                 String create_table_command = "CREATE TABLE IF NOT EXISTS WiFiSignals (" +
-                    "BeaconInterval TEXT NULL," +
-                    "Bssid TEXT NULL," +
-                    "ChannelCenterFrequencyInKilohertz REAL NULL," +
-                    "IsWiFiDirect BLOB NULL," +
-                    "NetworkKind TEXT NUL," +
-                    "NetworkRssiInDecibelMilliwatts REAL NULL," +
-                    "PhyKind TEXT NULL," +
-                    "SecuritySettings TEXT NULL," +
-                    "SignalBars INTEGER NULL," +
-                    "Ssid TEXT NULL," +
-                    "Uptime TEXT NULL," +
-                    "VenueName TEXT NULL," +
-                    "ScanTime TEXT NULL)";
+                    "BeaconInterval INTEGER," +
+                    "Bssid TEXT," +
+                    "ChannelCenterFrequencyInKilohertz REAL," +
+                    "IsWiFiDirect INTEGER," +
+                    "NetworkKind TEXT," +
+                    "NetworkRssiInDecibelMilliwatts REAL," +
+                    "PhyKind TEXT," +
+                    "SecuritySettings TEXT," +
+                    "SignalBars INTEGER," +
+                    "Ssid TEXT," +
+                    "Uptime INTEGER," +
+                    "VenueName TEXT," +
+                    "ScanTime TEXT, " +
+                    "Latitude REAL, " +
+                    "Longitude REAL, " +
+                    "Accuracy REAL, " +
+                    "TimeStamp TEXT " +
+                    ")";
                 SqliteCommand createTable = new SqliteCommand(create_table_command, db);
                 try
                 {
-                    createTable.ExecuteReader();
+                    createTable.ExecuteNonQuery();
                 }
                 catch (SqliteException e)
                 {
@@ -91,8 +96,8 @@ namespace WiFiScannerUWP
 
             try
             {
-                StringBuilder networkInfo = await RunWifiScan();
-                txbReport.Text = networkInfo.ToString();
+                RunWifiScan();
+                Output.ItemsSource = Grab_Entries();
             }
 
                 //try
@@ -132,15 +137,13 @@ namespace WiFiScannerUWP
             btnScan.IsEnabled = true;
         }
 
-        private async Task<StringBuilder> RunWifiScan()
+        private async void RunWifiScan()
         {
             await _wifiScanner.ScanForNetworks();
+            WiFiNetworkReport report = _wifiScanner.WiFiAdapter.NetworkReport;
 
             Geolocator geolocator = new Geolocator();
-
             Geoposition position = await geolocator.GetGeopositionAsync();
-
-            WiFiNetworkReport report = _wifiScanner.WiFiAdapter.NetworkReport;
 
             var locationwifiGPSdata = new LocationWiFiGPSDetail()
             {
@@ -170,16 +173,12 @@ namespace WiFiScannerUWP
             };
 
                 locationwifiGPSdata.WiFiSignals.Add(wifiSignal);
-                Add_WiFiScanner_db(wifiSignal);
+                Add_WiFiScanner_db(wifiSignal, locationwifiGPSdata);
 
             }
-
-            StringBuilder networkInfo = CreateCsvReport(locationwifiGPSdata);
-
-            return networkInfo;
         }
 
-        private void Add_WiFiScanner_db(WiFiSignal wifiSignal)
+        private void Add_WiFiScanner_db(WiFiSignal wifiSignal, LocationWiFiGPSDetail gpsSignal)
         {
             using (SqliteConnection db = new SqliteConnection("Filename = WiFiScanner.db"))
             {
@@ -188,7 +187,28 @@ namespace WiFiScannerUWP
                 using (SqliteCommand insertCommand = new SqliteCommand())
                 {
                     insertCommand.Connection = db;
-                    insertCommand.CommandText = "INSERT INTO WiFiSignals VALUES (" +
+                    insertCommand.CommandText = "INSERT INTO WiFiSignals " +
+                        "(" +
+                        "BeaconInterval, " +
+                        "Bssid, " +
+                        "ChannelCenterFrequencyInKilohertz, " +
+                        "IsWiFiDirect, " +
+                        "NetworkKind, " +
+                        "NetworkRssiInDecibelMilliwatts, " +
+                        "PhyKind, " +
+                        "SecuritySettings, " +
+                        "SignalBars, " +
+                        "Ssid, " +
+                        "Uptime, " +
+                        "VenueName, " +
+                        "ScanTime," +
+                        "Latitude," +
+                        "Longitude," +
+                        "Accuracy," +
+                        "TimeStamp" +
+                        ")" +
+                        "VALUES " +
+                        "(" +
                         "@BeaconInterval," +
                         "@Bssid," +
                         "@ChannelCenterFrequencyInKilohertz," +
@@ -201,24 +221,33 @@ namespace WiFiScannerUWP
                         "@Ssid," +
                         "@Uptime," +
                         "@VenueName," +
-                        "@ScanTime)";
-                    insertCommand.Parameters.AddWithValue("@BeaconInterval", wifiSignal.BeaconInterval);
-                    insertCommand.Parameters.AddWithValue("@Bssid", wifiSignal.Bssid);
-                    insertCommand.Parameters.AddWithValue("@ChannelCenterFrequencyInKilohertz", wifiSignal.ChannelCenterFrequencyInKilohertz);
-                    insertCommand.Parameters.AddWithValue("@IsWiFiDirect", wifiSignal.IsWiFiDirect);
-                    insertCommand.Parameters.AddWithValue("@NetworkKind", wifiSignal.NetworkKind);
-                    insertCommand.Parameters.AddWithValue("@NetworkRssiInDecibelMilliwatts", wifiSignal.NetworkRssiInDecibelMilliwatts);
-                    insertCommand.Parameters.AddWithValue("@PhyKind", wifiSignal.PhyKind);
-                    insertCommand.Parameters.AddWithValue("@SecuritySettings", wifiSignal.SecuritySettings);
-                    insertCommand.Parameters.AddWithValue("@SignalBars", wifiSignal.SignalBars);
-                    insertCommand.Parameters.AddWithValue("@Ssid", wifiSignal.Ssid);
-                    insertCommand.Parameters.AddWithValue("@Uptime", wifiSignal.Uptime);
-                    insertCommand.Parameters.AddWithValue("@VenueName", wifiSignal.VenueName);
-                    insertCommand.Parameters.AddWithValue("@ScanTime", wifiSignal.ScanTime.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                        "@ScanTime," +
+                        "@Latitude," +
+                        "@Longitude," +
+                        "@Accuracy," +
+                        "@TimeStamp" +
+                        ")";
+                    insertCommand.Parameters.AddWithValue("@BeaconInterval", wifiSignal.BeaconInterval.Ticks); //long INTEGER
+                    insertCommand.Parameters.AddWithValue("@Bssid", wifiSignal.Bssid); //string TEXT
+                    insertCommand.Parameters.AddWithValue("@ChannelCenterFrequencyInKilohertz", wifiSignal.ChannelCenterFrequencyInKilohertz); //double REAL
+                    insertCommand.Parameters.AddWithValue("@IsWiFiDirect", (wifiSignal.IsWiFiDirect) ? 1 : 0); //bool INTEGER
+                    insertCommand.Parameters.AddWithValue("@NetworkKind", wifiSignal.NetworkKind); //string TEXT
+                    insertCommand.Parameters.AddWithValue("@NetworkRssiInDecibelMilliwatts", wifiSignal.NetworkRssiInDecibelMilliwatts); //double REAL
+                    insertCommand.Parameters.AddWithValue("@PhyKind", wifiSignal.PhyKind); //string TEXT
+                    insertCommand.Parameters.AddWithValue("@SecuritySettings", wifiSignal.SecuritySettings); //string TEXT
+                    insertCommand.Parameters.AddWithValue("@SignalBars", wifiSignal.SignalBars); //byte INTEGER
+                    insertCommand.Parameters.AddWithValue("@Ssid", wifiSignal.Ssid); //string TEXT
+                    insertCommand.Parameters.AddWithValue("@Uptime", wifiSignal.Uptime.Ticks); //long INTEGER
+                    insertCommand.Parameters.AddWithValue("@VenueName", wifiSignal.VenueName); //string TEXT
+                    insertCommand.Parameters.AddWithValue("@ScanTime", wifiSignal.ScanTime.ToString("yyyy-MM-dd HH:mm:ss.fff")); //string TEXT
+                    insertCommand.Parameters.AddWithValue("@Latitude", gpsSignal.Latitude); //double REAL
+                    insertCommand.Parameters.AddWithValue("@Longitude", gpsSignal.Longitude); //double REAL
+                    insertCommand.Parameters.AddWithValue("@Accuracy", gpsSignal.Accuracy); //double REAL
+                    insertCommand.Parameters.AddWithValue("@TimeStamp", gpsSignal.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fff")); //string TEXT
 
                     try
                     {
-                        insertCommand.ExecuteReader();
+                        insertCommand.ExecuteNonQuery();
                     }
                     catch (SqliteException e)
                     {
@@ -229,29 +258,35 @@ namespace WiFiScannerUWP
             }
         }
 
-        private StringBuilder CreateCsvReport(LocationWiFiGPSDetail wifiPoint)
+        private List<String> Grab_Entries()
         {
+            List<String> entries = new List<string>();
 
-            StringBuilder networkInfo = new StringBuilder();
-
-            networkInfo.AppendLine("MAC,SSID,SignalBars,Type,Lat,Long,Accuracy,Encryption,Venue,Time");
-           
-            foreach (var wifiSignal in wifiPoint.WiFiSignals)
+            using (SqliteConnection db = new SqliteConnection("Filename = WiFiScanner.db"))
             {
-                networkInfo.Append($"{wifiSignal.Bssid},");
-                networkInfo.Append($"{wifiSignal.Ssid},");
-                networkInfo.Append($"{wifiSignal.SignalBars},");
-                networkInfo.Append($"{wifiSignal.NetworkKind},");
-                networkInfo.Append($"{wifiPoint.Latitude},");
-                networkInfo.Append($"{wifiPoint.Longitude},");
-                networkInfo.Append($"{wifiPoint.Accuracy},");
-                networkInfo.Append($"{wifiSignal.SecuritySettings},");
-                networkInfo.Append($"{_wifiScanner.venueName},");
-                networkInfo.Append($"{_wifiScanner.scanTime.ToString("G")}");
-                networkInfo.AppendLine();
-            }
+                db.Open();
 
-            return networkInfo;
+                SqliteCommand selectCommand = new SqliteCommand("SELECT Ssid, Bssid, NetworkRssiInDecibelMilliwatts, VenueName FROM WiFiSignals", db);
+                SqliteDataReader query;
+
+                try
+                {
+                    query = selectCommand.ExecuteReader();
+                }
+                catch (SqliteException e)
+                {
+                    //Handle error
+                    return entries;
+                }
+
+                while (query.Read())
+                {
+                    entries.Add(query.GetString(0) + " [MAC " + query.GetString(1) + "] " + query.GetString(2) + "dBm (" + query.GetString(3) + ")");
+                }
+
+                db.Close();
+            }
+            return entries;
         }
 
         private async Task ShowMessage(string message)
