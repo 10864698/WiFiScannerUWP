@@ -11,7 +11,7 @@ namespace WiFiScannerUWP
     public class WiFiAdapterScanner : INotifyPropertyChanged
 
     {
-        private string venue_name;
+        private string venue_name = "Enter Venue Name";
         internal DateTime scanTime;
 
         public WiFiAdapter WiFiAdapter { get; private set; }

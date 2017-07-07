@@ -18,11 +18,5 @@ namespace WiFiScannerUWP
         public TimeSpan Uptime { get; internal set; }
         public string VenueName { get; internal set; }
         public DateTime ScanTime { get; internal set; }
-
-        public WiFiSignal()
-        {
-            VenueName = "VenueName";
-        }
-
     }
 }

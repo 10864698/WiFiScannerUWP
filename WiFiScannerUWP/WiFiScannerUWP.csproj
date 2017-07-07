@@ -100,7 +100,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WiFiAdapterScanner.cs" />
-    <Compile Include="LocationWiFiGPSDetail.cs" />
+    <Compile Include="WiFiGPSDetail.cs" />
     <Compile Include="WiFiSignal.cs" />
   </ItemGroup>
   <ItemGroup>

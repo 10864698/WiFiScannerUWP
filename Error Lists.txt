@@ -13,3 +13,7 @@ System.Exception occurred
    at WiFiScannerUWP.WiFiScannerUWP_XamlTypeInfo.XamlUserType.ActivateInstance() in C:\Users\georg\Source\Repos\WiFIScannerUWP\WiFiScannerUWP\obj\x64\Release\XamlTypeInfo.g.cs:line 333
    at Windows.UI.Xaml.Markup.IXamlType__Impl.Vtbl.ActivateInstance__n(IntPtr pComThis, Void** unsafe_instance__retval) in C:\Users\georg\Source\Repos\WiFIScannerUWP\WiFiScannerUWP\obj\x64\Release\ilc\intermediate\WiFiScannerUWP.McgInterop\ImplTypes.g.cs:line 34853
 
+   Severity	Code	Description	Project	File	Line	Suppression State
+Error	CS0120	An object reference is required for the non-static field, method, or property 'WiFiSQLiteQueries.Create_WiFiScanner_db()'	WiFiScannerUWP	C:\Users\georg\Source\Repos\WiFiScannerUWP\WiFiScannerUWP\MainPage.xaml.cs	30	Active
+
+
