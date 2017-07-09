@@ -123,19 +123,19 @@ namespace WiFiScannerUWP
                     throw new Exception("SQL database not opened.");
                 }
 
-                String drop_table_command = "DROP TABLE IF EXISTS WiFiSignals;";
-                SqliteCommand dropTable = new SqliteCommand(drop_table_command, db);
-                try
-                {
-                    dropTable.ExecuteNonQuery();
-                }
-                catch (SqliteException e)
-                {
-                    throw new Exception("SQL table not droped.");
-                }
+                //String drop_table_command = "DROP TABLE IF EXISTS WiFiSignals;";
+                //SqliteCommand dropTable = new SqliteCommand(drop_table_command, db);
+                //try
+                //{
+                //    dropTable.ExecuteNonQuery();
+                //}
+                //catch (SqliteException e)
+                //{
+                //    throw new Exception("SQL table not droped.");
+                //}
 
                 String create_table_command = "CREATE TABLE IF NOT EXISTS WiFiSignals (" +
-                    "BeaconInterval INTEGER," +
+                    //"BeaconInterval INTEGER," +
                     "Bssid TEXT," +
                     //"ChannelCenterFrequencyInKilohertz REAL," +
                     //"IsWiFiDirect INTEGER," +
@@ -145,7 +145,7 @@ namespace WiFiScannerUWP
                     //"SecuritySettings TEXT," +
                     //"SignalBars INTEGER," +
                     "Ssid TEXT," +
-                    //"Uptime INTEGER," +
+                    "Uptime INTEGER," +
                     "VenueName TEXT," +
                     "ScanTime TEXT, " +
                     "Latitude REAL, " +
@@ -178,7 +178,7 @@ namespace WiFiScannerUWP
                     insertCommand.Connection = db;
                     insertCommand.CommandText = "INSERT INTO WiFiSignals " +
                         "(" +
-                        "BeaconInterval, " +
+                        //"BeaconInterval, " +
                         "Bssid, " +
                         //"ChannelCenterFrequencyInKilohertz, " +
                         //"IsWiFiDirect, " +
@@ -188,7 +188,7 @@ namespace WiFiScannerUWP
                         //"SecuritySettings, " +
                         //"SignalBars, " +
                         "Ssid, " +
-                        //"Uptime, " +
+                        "Uptime, " +
                         "VenueName," +
                         "ScanTime," +
                         "Latitude," +
@@ -198,7 +198,7 @@ namespace WiFiScannerUWP
                         ")" +
                         "VALUES " +
                         "(" +
-                        "@BeaconInterval," +
+                        //"@BeaconInterval," +
                         "@Bssid," +
                         //"@ChannelCenterFrequencyInKilohertz," +
                         //"@IsWiFiDirect," +
@@ -208,7 +208,7 @@ namespace WiFiScannerUWP
                         //"@SecuritySettings," +
                         //"@SignalBars," +
                         "@Ssid," +
-                        //"@Uptime," +
+                        "@Uptime," +
                         "@VenueName," +
                         "@ScanTime," +
                         "@Latitude," +
@@ -216,7 +216,7 @@ namespace WiFiScannerUWP
                         "@Accuracy," +
                         "@TimeStamp" +
                         ")";
-                    insertCommand.Parameters.AddWithValue("@BeaconInterval", wifiSignal.BeaconInterval.Ticks); //long INTEGER
+                    ////insertCommand.Parameters.AddWithValue("@BeaconInterval", wifiSignal.BeaconInterval.Ticks); //long INTEGER
                     insertCommand.Parameters.AddWithValue("@Bssid", wifiSignal.Bssid); //string TEXT
                     //insertCommand.Parameters.AddWithValue("@ChannelCenterFrequencyInKilohertz", wifiSignal.ChannelCenterFrequencyInKilohertz); //double REAL
                     //insertCommand.Parameters.AddWithValue("@IsWiFiDirect", (wifiSignal.IsWiFiDirect) ? 1 : 0); //bool INTEGER
@@ -226,7 +226,7 @@ namespace WiFiScannerUWP
                     //insertCommand.Parameters.AddWithValue("@SecuritySettings", wifiSignal.SecuritySettings); //string TEXT
                     //insertCommand.Parameters.AddWithValue("@SignalBars", wifiSignal.SignalBars); //byte INTEGER
                     insertCommand.Parameters.AddWithValue("@Ssid", wifiSignal.Ssid); //string TEXT
-                    //insertCommand.Parameters.AddWithValue("@Uptime", wifiSignal.Uptime.Ticks); //long INTEGER
+                    insertCommand.Parameters.AddWithValue("@Uptime", wifiSignal.Uptime.Ticks); //long INTEGER
                     insertCommand.Parameters.AddWithValue("@VenueName", wifiSignal.VenueName); //string TEXT
                     insertCommand.Parameters.AddWithValue("@ScanTime", wifiSignal.ScanTime.ToString("yyyy-MM-dd HH:mm:ss.fff")); //string TEXT
                     insertCommand.Parameters.AddWithValue("@Latitude", gpsSignal.Latitude); //double REAL
@@ -257,7 +257,7 @@ namespace WiFiScannerUWP
             {
                 db.Open();
 
-                SqliteCommand selectCommand = new SqliteCommand("SELECT Ssid, Bssid, NetworkRssiInDecibelMilliwatts, TimeStamp, VenueName, BeaconInterval FROM WiFiSignals", db);
+                SqliteCommand selectCommand = new SqliteCommand("SELECT Ssid, Bssid, NetworkRssiInDecibelMilliwatts, TimeStamp, VenueName, Uptime FROM WiFiSignals ORDER BY Uptime DESC", db);
                 SqliteDataReader query;
 
                 try
@@ -272,7 +272,9 @@ namespace WiFiScannerUWP
 
                 while (query.Read())
                 {
-                    entries.Add(query.GetString(0) + " [MAC " + query.GetString(1) + "] " + query.GetString(2) + " dBm " + query.GetString(3) + " (" + query.GetString(4) + ")" + query.GetInt64(5));
+                    TimeSpan interval = TimeSpan.FromTicks(query.GetInt64(5));
+                    string up_time = interval.ToString("%d") + " day(s) " + interval.ToString(@"hh\:mm");
+                    entries.Add(query.GetString(0) + " [MAC " + query.GetString(1) + "] " + query.GetString(2) + " dBm " + query.GetString(3) + " (" + query.GetString(4) + ") " + up_time);
                 }
 
                 db.Close();

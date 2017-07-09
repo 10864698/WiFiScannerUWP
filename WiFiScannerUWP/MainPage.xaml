@@ -25,11 +25,11 @@
 
 
         <StackPanel Grid.Row="2">
-            <ListView Name="Output" ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <ListView Name="Output" Height="1000"  ScrollViewer.VerticalScrollMode="Enabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <TextBlock Text="{Binding}"/>
+                            <TextBlock TextWrapping="Wrap" Text="{Binding}"/>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
