@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Identity.Client;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,6 +27,11 @@ namespace WiFiScannerUWP
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
+        /// 
+
+        private static string ClientId = "a9807658-23f7-44fe-80c0-2b954c1eb9de";
+        public static PublicClientApplication PublicClientApp = new PublicClientApplication(ClientId);
+
         public App()
         {
             this.InitializeComponent();

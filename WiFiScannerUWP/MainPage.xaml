@@ -15,6 +15,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
         <Button Name="btnScan" Click="btnScan_Click" Grid.Row="0"  HorizontalAlignment="Center" >Scan For Networks</Button>
@@ -23,9 +24,20 @@
             <TextBox x:Name="venueNameTextBox" Header="Venue" Height="66" Width="352" TextChanged="venueName_TextChanged" IsReadOnly="False" Margin="0" TextWrapping="Wrap" Text="{Binding venueName, Mode=TwoWay}" HorizontalAlignment="Center"/>
         </StackPanel>
 
+        <StackPanel Background="Azure" Grid.Row="2">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="CallGraphButton" Content="Call Microsoft Graph API" HorizontalAlignment="Right" Padding="5" Click="CallGraphButton_Click" Margin="5" FontFamily="Segoe Ui"/>
+                <Button x:Name="SignOutButton" Content="Sign-Out" HorizontalAlignment="Right" Padding="5" Click="SignOutButton_Click" Margin="5" Visibility="Collapsed" FontFamily="Segoe Ui"/>
+            </StackPanel>
+            <TextBlock Text="API Call Results" Margin="0,0,0,-5" FontFamily="Segoe Ui" />
+            <TextBox x:Name="ResultText" TextWrapping="Wrap" MinHeight="120" Margin="5" FontFamily="Segoe Ui"/>
+            <TextBlock Text="Token Info" Margin="0,0,0,-5" FontFamily="Segoe Ui" />
+            <TextBox x:Name="TokenInfoText" TextWrapping="Wrap" MinHeight="70" Margin="5" FontFamily="Segoe Ui"/>
+        </StackPanel>
 
-        <StackPanel Grid.Row="2">
-            <ListView Name="Output" Height="1000"  ScrollViewer.VerticalScrollMode="Enabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+        <StackPanel Grid.Row="3">
+            <ListView Name="Output" Height="350"  ScrollViewer.VerticalScrollMode="Enabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>

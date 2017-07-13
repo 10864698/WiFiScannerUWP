@@ -132,6 +132,9 @@
     <PackageReference Include="Microsoft.Data.SQLite">
       <Version>1.1.1</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.Identity.Client">
+      <Version>1.1.0-preview</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>5.3.3</Version>
     </PackageReference>
