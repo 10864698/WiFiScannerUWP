@@ -8,7 +8,7 @@ using Windows.Devices.WiFi;
 
 namespace WiFiScannerUWP
 {
-    public class WiFiAdapterScanner : INotifyPropertyChanged
+    public class WifiAdapterScanner : INotifyPropertyChanged
 
     {
         private string venue_name = "Enter Venue Name";

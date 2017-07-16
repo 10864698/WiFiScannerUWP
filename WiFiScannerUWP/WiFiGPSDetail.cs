@@ -5,7 +5,7 @@ using Windows.Devices.Geolocation;
 namespace WiFiScannerUWP
 
 {
-    public class WiFiGPSDetail
+    public class WifiGpsDetail
     {
         public double? Accuracy { get; set; }
         public double? Altitude { get; set; }
@@ -14,11 +14,11 @@ namespace WiFiScannerUWP
         public double? Longitude { get; set; }
         public DateTimeOffset TimeStamp { get; set; }
 
-        public List<WiFiSignal> WiFiSignals { get; private set; }
+        public List<WifiSignal> WiFiSignals { get; private set; }
 
-        public WiFiGPSDetail()
+        public WifiGpsDetail()
         {
-            WiFiSignals = new List<WiFiSignal>();
+            WiFiSignals = new List<WifiSignal>();
         }
 
         public string GetLocationStatus()

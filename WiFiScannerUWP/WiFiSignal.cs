@@ -3,7 +3,7 @@
 namespace WiFiScannerUWP
 
 {
-    public class WiFiSignal
+    public class WifiSignal
     {
         public TimeSpan BeaconInterval { get; set; }
         public string Bssid { get; set; }
