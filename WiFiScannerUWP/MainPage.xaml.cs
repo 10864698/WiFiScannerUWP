@@ -22,10 +22,7 @@ namespace WiFiScannerUWP
 
         ////Set the scope for API call to user.read
         //string[] _scopes = new string[] { "user.read" };
-
-
         private WifiAdapterScanner _wifiScanner;
-
 
         public MainPage()
         {
@@ -36,10 +33,6 @@ namespace WiFiScannerUWP
             _wifiScanner = new WifiAdapterScanner();
 
             DataContext = _wifiScanner;
-
-            CreateWifiScannerDatabase();
-
-            Output.ItemsSource = ReadWifiScannerDatabase;
         }
 
         private async void PageLoaded(object sender, RoutedEventArgs e)
@@ -52,13 +45,13 @@ namespace WiFiScannerUWP
             await _wifiScanner.InitializeScanner();
         }
 
-        private async void ClearButtonClick(object sender, RoutedEventArgs e)
+        private async void ClearTableButtonClick(object sender, RoutedEventArgs e)
         {
-            ButtonClear.IsEnabled = false;
+            ButtonClearTable.IsEnabled = false;
 
             try
             {
-                ClearWifiSignalsTable();
+                ClearWifiSignalsTable(_wifiScanner.venueName);
             }
             catch (Exception ex)
             {
@@ -67,7 +60,27 @@ namespace WiFiScannerUWP
                 await md.ShowAsync();
             }
 
-            ButtonClear.IsEnabled = true;
+            ButtonClearTable.IsEnabled = true;
+        }
+
+        private async void ClearDatabaseButtonClick(object sender, RoutedEventArgs e)
+        {
+            ButtonClearDatabase.IsEnabled = false;
+
+            try
+            {
+                ClearDatabase();
+            }
+            catch (Exception ex)
+            {
+                MessageDialog md = new MessageDialog(ex.Message);
+
+                await md.ShowAsync();
+            }
+
+            ButtonClearDatabase.IsEnabled = true;
+
+            //Output.ItemsSource = ReadWifiScannerDatabase;
         }
 
         private async void ScanButtonClick(object sender, RoutedEventArgs e)
@@ -88,7 +101,25 @@ namespace WiFiScannerUWP
             ButtonScan.IsEnabled = true;
         }
 
-        public async Task RunWifiScan()
+        private async void ShowButtonClick(object sender, RoutedEventArgs e)
+        {
+            ButtonShow.IsEnabled = false;
+
+            try
+            {
+                Output.ItemsSource = ReadWifiScannerDatabase;
+            }
+            catch (Exception ex)
+            {
+                MessageDialog md = new MessageDialog(ex.Message);
+
+                await md.ShowAsync();
+            }
+
+            ButtonShow.IsEnabled = true;
+        }
+
+        private async Task RunWifiScan()
         {
             await _wifiScanner.ScanForNetworks();
             WiFiNetworkReport report = _wifiScanner.WiFiAdapter.NetworkReport;
@@ -127,9 +158,7 @@ namespace WiFiScannerUWP
                     ScanTime = _wifiScanner.scanTime
                 };
 
-                locationWifiGpsData.WiFiSignals.Add(wifiSignal);
-                AddToWifiScannerDatabase(wifiSignal, locationWifiGpsData);
-
+                AddWifiScanResultsToWifiScannerDatabase(wifiSignal, locationWifiGpsData);
             }
         }
 
@@ -140,10 +169,10 @@ namespace WiFiScannerUWP
             await dialog.ShowAsync();
         }
 
-        private void venueNameTextChanged(object sender, TextChangedEventArgs e)
+        private void VenueNameTextChanged(object sender, TextChangedEventArgs e)
         { }
 
-        private void CreateWifiScannerDatabase()
+        private void CreateVenueTableInWifiScannerDatabaseIfNotExists(string tableName)
         {
             using (SqliteConnection database = new SqliteConnection("Filename = WiFiScanner.db"))
             {
@@ -156,18 +185,7 @@ namespace WiFiScannerUWP
                     throw new Exception("SQL database not opened.");
                 }
 
-                //String drop_table_command = "DROP TABLE IF EXISTS WiFiSignals;";
-                //SqliteCommand dropTable = new SqliteCommand(drop_table_command, db);
-                //try
-                //{
-                //    dropTable.ExecuteNonQuery();
-                //}
-                //catch (SqliteException e)
-                //{
-                //    throw new Exception("SQL table not dropped.");
-                //}
-
-                String sqlCreateTableCommand = "CREATE TABLE IF NOT EXISTS WiFiSignals (" +
+                String sqlCreateTableCommand = "CREATE TABLE IF NOT EXISTS " + RemoveWhiteSpace(tableName) + " (" +
                     //"BeaconInterval INTEGER," +
                     "Bssid TEXT," +
                     //"ChannelCenterFrequencyInKilohertz REAL," +
@@ -196,16 +214,33 @@ namespace WiFiScannerUWP
                 }
                 catch (SqliteException e)
                 {
-                    throw new Exception("SQL table not created.");
+                    throw new Exception("SQL table " + RemoveWhiteSpace(tableName) + " not created.");
                 }
                 database.Close();
             }
 
             Output.ItemsSource = ReadWifiScannerDatabase;
-
         }
 
-        private void ClearWifiSignalsTable()
+        private string RemoveWhiteSpace(string input)
+        {
+            int j = 0, inputlen = input.Length;
+            char[] newarr = new char[inputlen];
+
+            for (int i = 0; i < inputlen; ++i)
+            {
+                char tmp = input[i];
+
+                if (!char.IsWhiteSpace(tmp))
+                {
+                    newarr[j] = tmp;
+                    ++j;
+                }
+            }
+            return new String(newarr, 0, j);
+        }
+
+        private void ClearWifiSignalsTable(string tableName)
         {
             using (SqliteConnection database = new SqliteConnection("Filename = WiFiScanner.db"))
             {
@@ -218,7 +253,7 @@ namespace WiFiScannerUWP
                     throw new Exception("SQL database not opened.");
                 }
 
-                String sqlDropTableCommand = "DROP TABLE IF EXISTS WiFiSignals;";
+                String sqlDropTableCommand = "DROP TABLE IF EXISTS " + RemoveWhiteSpace(tableName) + ";";
                 SqliteCommand dropTable = new SqliteCommand(sqlDropTableCommand, database);
                 try
                 {
@@ -229,7 +264,7 @@ namespace WiFiScannerUWP
                     throw new Exception("SQL table not dropped.");
                 }
 
-                String sqlCreateTableCommand = "CREATE TABLE IF NOT EXISTS WiFiSignals (" +
+                String sqlCreateTableCommand = "CREATE TABLE IF NOT EXISTS " + RemoveWhiteSpace(tableName) + " (" +
                     //"BeaconInterval INTEGER," +
                     "Bssid TEXT," +
                     //"ChannelCenterFrequencyInKilohertz REAL," +
@@ -267,17 +302,33 @@ namespace WiFiScannerUWP
 
         }
 
-        private void AddToWifiScannerDatabase(WifiSignal wifiSignal, WifiGpsDetail gpsSignal)
+        private void ClearDatabase()
+        {
+            string filename = "WiFiScanner.db";
+            SqliteConnection connection = new SqliteConnection("Filename = " + filename);
+            connection.Close();
+            GC.Collect();
+            System.IO.File.Delete(filename);
+
+            CreateVenueTableInWifiScannerDatabaseIfNotExists(RemoveWhiteSpace(_wifiScanner.venueName));
+
+            Output.ItemsSource = ReadWifiScannerDatabase;
+        }
+
+        private void AddWifiScanResultsToWifiScannerDatabase(WifiSignal wifiSignal, WifiGpsDetail gpsSignal)
         {
             using (SqliteConnection database = new SqliteConnection("Filename = WiFiScanner.db"))
             {
                 database.Open();
 
+                //create if table doesn't exist
+                CreateVenueTableInWifiScannerDatabaseIfNotExists(RemoveWhiteSpace(_wifiScanner.venueName));
+
                 //check if VenueName / Bssid / Ssid exists already
                 using (SqliteCommand sqlCheckExistingWifiSignalCommand = new SqliteCommand())
                 {
                     sqlCheckExistingWifiSignalCommand.Connection = database;
-                    sqlCheckExistingWifiSignalCommand.CommandText = "SELECT count(*) FROM WiFiSignals " +
+                    sqlCheckExistingWifiSignalCommand.CommandText = "SELECT count(*) FROM " + RemoveWhiteSpace(_wifiScanner.venueName) + " " +
                         "WHERE VenueName = @VenueName " +
                         "AND Bssid = @Bssid " +
                         "AND Ssid = @Ssid";
@@ -290,7 +341,7 @@ namespace WiFiScannerUWP
                         using (SqliteCommand insertCommand = new SqliteCommand())
                         {
                             insertCommand.Connection = database;
-                            insertCommand.CommandText = "INSERT INTO WiFiSignals " +
+                            insertCommand.CommandText = "INSERT INTO " + RemoveWhiteSpace(_wifiScanner.venueName) + " " +
                                 "(" +
                                 //"BeaconInterval, " +
                                 "Bssid, " +
@@ -386,7 +437,7 @@ namespace WiFiScannerUWP
 
                     SqliteCommand sqlSelectCommand = new SqliteCommand(
                         "SELECT Ssid, Bssid, NetworkRssiInDecibelMilliwatts, TimeStamp, VenueName, Uptime, Accuracy, Altitude, LocationStatus, Latitude, Longitude " +
-                        "FROM WiFiSignals " +
+                        "FROM " + RemoveWhiteSpace(_wifiScanner.venueName) + " " +
                         "ORDER BY NetworkRssiInDecibelMilliwatts DESC, Uptime DESC", database);
                     SqliteDataReader query;
 
@@ -396,7 +447,8 @@ namespace WiFiScannerUWP
                     }
                     catch (SqliteException e)
                     {
-                        return entries;
+                        throw new Exception("SQL database no entries in table." + RemoveWhiteSpace(_wifiScanner.venueName));
+                        //return entries;
                     }
 
                     while (query.Read())

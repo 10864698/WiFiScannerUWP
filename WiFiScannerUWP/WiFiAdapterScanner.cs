@@ -8,22 +8,26 @@ using Windows.Devices.WiFi;
 
 namespace WiFiScannerUWP
 {
+    
     public class WifiAdapterScanner : INotifyPropertyChanged
 
     {
-        private string venue_name = "Enter Venue Name";
+        Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
+        private string _venueName = "Enter Venue Name";
         internal DateTime scanTime;
 
         public WiFiAdapter WiFiAdapter { get; private set; }
 
         public string venueName
-
         {
-            get { return venue_name; }
-
+            get
+            {
+                return _venueName;
+            }
             set
             {
-                venue_name = value;
+                _venueName = value;
                 OnPropertyChanged("venueName");
             }
         }
@@ -31,7 +35,6 @@ namespace WiFiScannerUWP
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string name)
-
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }

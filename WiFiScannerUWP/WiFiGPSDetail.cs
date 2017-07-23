@@ -14,13 +14,6 @@ namespace WiFiScannerUWP
         public double? Longitude { get; set; }
         public DateTimeOffset TimeStamp { get; set; }
 
-        public List<WifiSignal> WiFiSignals { get; private set; }
-
-        public WifiGpsDetail()
-        {
-            WiFiSignals = new List<WifiSignal>();
-        }
-
         public string GetLocationStatus()
         {
             if (LocationStatus == PositionStatus.Disabled)
