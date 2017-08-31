@@ -3,41 +3,16 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.WiFi;
-
-
+using Windows.Storage;
 
 namespace WiFiScannerUWP
 {
     
-    public class WifiAdapterScanner : INotifyPropertyChanged
+    public class WifiAdapterScanner 
 
     {
-        Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-
-        private string _venueName = "Enter Venue Name";
         internal DateTime scanTime;
-
         public WiFiAdapter WiFiAdapter { get; private set; }
-
-        public string venueName
-        {
-            get
-            {
-                return _venueName;
-            }
-            set
-            {
-                _venueName = value;
-                OnPropertyChanged("venueName");
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string name)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
 
         public async Task InitializeScanner()
         {

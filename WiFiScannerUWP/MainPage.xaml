@@ -11,42 +11,30 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="6*"/>
-        </Grid.RowDefinitions>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignTopWithPanel="True">
+            <RelativePanel BorderBrush="Gray" BorderThickness="1">
 
-        <Button Name="ButtonScan" Click="ScanButtonClick" Grid.Row="0"  HorizontalAlignment="Left" VerticalAlignment="Center">Scan For Networks</Button>
+                <Button Name="ButtonScan" Click="ScanButtonClick" >Scan For Networks</Button>
 
-        <Button Name="ButtonClearTable" Click="ClearTableButtonClick" Grid.Row="0"  HorizontalAlignment="Center" VerticalAlignment="Center">Clear the Table</Button>
+                <Button Name="ButtonShow" Click="ShowButtonClick" RelativePanel.RightOf="ButtonScan">Show Venue Table</Button>
 
-        <Button Name="ButtonClearDatabase" Click="ClearDatabaseButtonClick" Grid.Row="0"  HorizontalAlignment="Right" VerticalAlignment="Center">Clear the Database</Button>
+                <Button Name="ButtonClearTable" Click="ClearTableButtonClick" RelativePanel.RightOf="ButtonShow">Clear the Table</Button>
 
-        <TextBox x:Name="venueNameTextBox" Header="Venue" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="66" Width="352" TextChanged="VenueNameTextChanged" IsReadOnly="False" Margin="0" TextWrapping="Wrap" Text="{Binding venueName, Mode=TwoWay}"/>
+                <Button Name="ButtonClearDatabase" Click="ClearDatabaseButtonClick" RelativePanel.Below="ButtonScan">Clear the Database</Button>
 
-        <Button Name="ButtonShow" Click="ShowButtonClick" Grid.Row="1"  HorizontalAlignment="Right" VerticalAlignment="Center">Show</Button>
+                <TextBox Name="venueNameTextBox" Header="Venue"  RelativePanel.Below="ButtonClearDatabase" Height="66" Width="352" TextChanged="VenueNameTextChanged" IsReadOnly="False" Margin="0" TextWrapping="Wrap" Text="{Binding VenueName, Mode=TwoWay}"/>
 
-        <!--<StackPanel Background="Azure" Grid.Row="2">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button x:Name="CallGraphButton" Content="Call Microsoft Graph API" HorizontalAlignment="Right" Padding="5" Click="CallGraphButton_Click" Margin="5" FontFamily="Segoe Ui"/>
-                <Button x:Name="SignOutButton" Content="Sign-Out" HorizontalAlignment="Right" Padding="5" Click="SignOutButton_Click" Margin="5" Visibility="Collapsed" FontFamily="Segoe Ui"/>
-            </StackPanel>
-            <TextBlock Text="API Call Results" Margin="0,0,0,-5" FontFamily="Segoe Ui" />
-            <TextBox x:Name="ResultText" TextWrapping="Wrap" MinHeight="120" Margin="5" FontFamily="Segoe Ui"/>
-            <TextBlock Text="Token Info" Margin="0,0,0,-5" FontFamily="Segoe Ui" />
-            <TextBox x:Name="TokenInfoText" TextWrapping="Wrap" MinHeight="70" Margin="5" FontFamily="Segoe Ui"/>
-        </StackPanel>-->
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" RelativePanel.Below="venueNameTextBox" VerticalScrollBarVisibility="Visible"  VerticalScrollMode="Enabled" >
+                    <ListView Name="Output" >
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock TextWrapping="Wrap" Text="{Binding}"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </ScrollViewer>
 
-
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" Grid.Row="2" VerticalScrollBarVisibility="Visible"  VerticalScrollMode="Enabled" >
-            <ListView Name="Output" Grid.Row="2" >
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock TextWrapping="Wrap" Text="{Binding}"/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            </RelativePanel>
         </ScrollViewer>
     </Grid>
 </Page>

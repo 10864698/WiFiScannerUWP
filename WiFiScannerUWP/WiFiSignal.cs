@@ -16,7 +16,7 @@ namespace WiFiScannerUWP
         public byte SignalBars { get; set; }
         public string Ssid { get; set; }
         public TimeSpan Uptime { get; internal set; }
-        public string VenueName { get; internal set; }
+        public string VenueName { get; set; }
         public DateTime ScanTime { get; internal set; }
     }
 }
